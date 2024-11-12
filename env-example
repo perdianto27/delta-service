@@ -1,0 +1,9 @@
+# General
+NODE_ENV=
+
+# Basic Auth
+BASIC_USER=
+BASIC_PASS=
+
+# JWT
+JWT_SECRET=
