@@ -11,9 +11,9 @@ const postLogin = async (request, reply) => {
     const token = await JwtHelpers.generateToken(request.body);
 
     return reply
-    .status(StatusCodes.CREATED)
+    .status(StatusCodes.OK)
     .send({
-      responseCode: StatusCodes.CREATED,
+      responseCode: StatusCodes.OK,
       responseDesc: "Login berhasil",
       data: token
     });

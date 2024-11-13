@@ -1,5 +1,6 @@
 const express = require('express')
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 const Logger = require('./helpers/logger');
 const auth = require('./routes/AuthRoutes');
@@ -13,6 +14,7 @@ dotenv.config()
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use('/auth', auth);
 app.use('/products', product);

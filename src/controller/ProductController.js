@@ -66,7 +66,6 @@ const getProductById = async (request, reply) => {
   try {
     const productId = Number(request.params.id);
     const product = products.find(p => p.id === productId);
-    console.log("product", request.params.id);
     if (!product) {
       return reply.status(StatusCodes.NOT_FOUND).send({
         responseCode: StatusCodes.NOT_FOUND,
