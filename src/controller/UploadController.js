@@ -1,6 +1,6 @@
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+
 const { StatusCodes } = require('http-status-codes');
 
 const Logger = require('../helpers/logger'); // Sesuaikan path Logger sesuai struktur proyek Anda
