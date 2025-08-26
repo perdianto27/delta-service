@@ -1,6 +1,9 @@
 const { StatusCodes } = require('http-status-codes');
 
+const { Product } = require("../models");
+
 const Logger = require('../helpers/logger');
+const { where } = require('sequelize');
 
 const logName = 'API Product';
 
@@ -17,7 +20,8 @@ const postProduct = async (request, reply) => {
       description,
     };
 
-    products.push(newProduct);
+    // products.push(newProduct);
+    await Product.create(newProduct)
 
     return reply
     .status(StatusCodes.CREATED)
@@ -25,7 +29,7 @@ const postProduct = async (request, reply) => {
       responseCode: StatusCodes.CREATED,
       responseDesc: "Data berhasil disimpan"
   });
-  } catch (error) {
+  } catch (err) {
     Logger.log([logName, 'POST Product', 'ERROR'], {
       message: `${err}`,
     });
@@ -41,6 +45,9 @@ const postProduct = async (request, reply) => {
 
 const getProduct = async (request, reply) => {
   try {
+
+    const products = await Product.findAll();
+
     return reply
     .status(StatusCodes.OK)
     .send({
@@ -64,8 +71,9 @@ const getProduct = async (request, reply) => {
 
 const getProductById = async (request, reply) => {
   try {
-    const productId = Number(request.params.id);
-    const product = products.find(p => p.id === productId);
+    const productId = request.params.id
+    const product = await Product.findByPk(productId);
+
     if (!product) {
       return reply.status(StatusCodes.NOT_FOUND).send({
         responseCode: StatusCodes.NOT_FOUND,
@@ -88,8 +96,9 @@ const getProductById = async (request, reply) => {
 
 const updateProductById = async (request, reply) => {
   try {
-    const productId = Number(request.params.id);
-    const product = products.find(p => p.id === productId);
+    const productId = request.params.id;
+    const product = await Product.findByPk(productId);
+
     if (!product) {
       return reply.status(StatusCodes.NOT_FOUND).send({
         responseCode: StatusCodes.NOT_FOUND,
@@ -97,7 +106,7 @@ const updateProductById = async (request, reply) => {
       });
     }
 
-    Object.assign(product, request.body);
+    await product.update(request.body);
 
     return reply.status(StatusCodes.OK).send({
       responseCode: StatusCodes.OK,
@@ -115,31 +124,30 @@ const updateProductById = async (request, reply) => {
 
 const deleteProductById = async (request, reply) => {
   try {
-    const productId = Number(request.params.id);
-    const productExists = products.some(p => p.id === productId);
+    const productId = request.params.id;
+    const product = await Product.findByPk(productId);
 
-    if (!productExists) {
+    if (!product) {
       return reply.status(StatusCodes.NOT_FOUND).send({
         responseCode: StatusCodes.NOT_FOUND,
         responseDesc: "Produk tidak ditemukan"
       });
     }
 
-    products = products.filter(p => p.id !== productId);
+    await product.destroy();
 
     return reply.status(StatusCodes.OK).send({
       responseCode: StatusCodes.OK,
       responseDesc: "Data berhasil dihapus"
     });
   } catch (error) {
-    Logger.log([logName, 'DELETE Product by ID', 'ERROR'], { message: `${error}` });
+    Logger.log([logName, "DELETE Product by ID", "ERROR"], { message: `${error}` });
     return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       responseCode: StatusCodes.INTERNAL_SERVER_ERROR,
       responseDesc: "Gagal menghapus data"
     });
   }
 };
-
 
 module.exports = {
   postProduct,
